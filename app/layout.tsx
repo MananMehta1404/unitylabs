@@ -1,6 +1,6 @@
 import './globals.css'
 
-import { Footer, Navbar } from '@/components'
+import { Navbar } from '@/components'
 
 export const metadata = {
   title: 'Hacker News',
