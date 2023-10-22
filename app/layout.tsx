@@ -1,6 +1,8 @@
+import Link from 'next/link'
 import './globals.css'
 
 import { Navbar } from '@/components'
+import Image from 'next/image'
 
 export const metadata = {
   title: 'Hacker News',

@@ -16,6 +16,11 @@ const Navbar = () => {
         />
         <p className='logo_text'>Hacker News</p>
       </Link>
+      <div className='flex gap-6'>
+        <Link href='/' className='mt-1'>Home</Link>
+        <button className='py-1 px-4 rounded-md bg-red-200'>Log In</button>
+        <button className='py-1 px-4 rounded-md bg-red-200'>Sign Up</button>
+      </div>
     </nav>
   )
 }

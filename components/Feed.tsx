@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { PostCard} from '@/components';
 import { fetchPosts } from '@/utils';
 import { PostProps } from '@/types';
+import Link from 'next/link';
 
 const Feed = () => {
   const [searchText, setSearchText] = useState('');
@@ -34,6 +35,16 @@ const Feed = () => {
     setSearchText(e.target.value);
   }
 
+  const handleOnPrevClick = () => {
+    if(pageNo === 0) setpageNo(nPages - 1);
+    else setpageNo(pageNo - 1);
+  }
+
+  const handleOnNextClick = () => {
+    if(pageNo === nPages - 1) setpageNo(0);
+    else setpageNo(pageNo + 1);
+  }
+
   useEffect(() => {
     getPosts();
   }, [searchText, pageNo]);
@@ -51,50 +62,63 @@ const Feed = () => {
         />
       </form>
 
+      {loading && (
+        <div className='mt-16 w-full flex-center'>
+          <Image
+            src='/loader.svg'
+            alt='loader'
+            width={50}
+            height={50}
+            className='object-contain'
+          />
+        </div>
+      )}
 
       {allPosts.hits?.length > 0 ? (
-          <section>
-            <div className='home__cars-wrapper mb-10'>
-              {allPosts.hits?.map((post: PostProps) => (
-                <PostCard post={post} key={post.objectID} />
-              ))}
-            </div>
-
-            {loading && (
-              <div className='mt-16 w-full flex-center'>
-                <Image
-                  src='/loader.svg'
-                  alt='loader'
-                  width={50}
-                  height={50}
-                  className='object-contain'
-                />
-              </div>
-            )}
-          </section>
+        <section>
+          <div className='home__cars-wrapper mb-10'>
+            {allPosts.hits?.map((post: PostProps) => (
+              <PostCard post={post} key={post.objectID} />
+            ))}
+          </div>
+        </section>
         ) : (
           <div className='home__error-container'>
             <h2 className='text-black text-xl font-bold'>
-              {loading && (
-                <div className='mt-16 w-full flex-center'>
-                  <Image
-                    src='/loader.svg'
-                    alt='loader'
-                    width={50}
-                    height={50}
-                    className='object-contain'
-                  />
-                </div>
-              )}
+            {!allPosts && (
+              <div className='mt-16 w-full flex-center'>
+                No posts found.
+              </div>
+            )}
             </h2>
           </div>
         )}
 
-      <div>
-        <button onClick={() => setpageNo(pageNo - 1)} className='m-4 py-1 px-4 rounded-md bg-red-200'>Prev</button>
-        {pageNo + 1} of {nPages}
-        <button onClick={() => setpageNo(pageNo + 1)} className='m-4 py-1 px-4 rounded-md bg-red-200'>Next</button>
-      </div>
+        {allPosts.hits?.length > 0 && (
+          <div className='flex justify-center items-center flex-row mb-10'>
+            {pageNo != 0 && (
+              <button onClick={handleOnPrevClick} className='m-4 py-1 px-4 rounded-md bg-red-200'> 
+                <Link href='/'>Prev</Link> 
+              </button>
+            )}
+              {pageNo + 1} of {nPages}
+            {pageNo != nPages - 1 && (
+              <button onClick={handleOnNextClick} className='m-4 py-1 px-4 rounded-md bg-red-200'>
+                <Link href='/'>Next</Link> 
+              </button>)}
+          </div>
+        )}
+
+        <Link href={'/'} className='top'>
+          <Image
+            src='/scroll.png'
+            alt="Scroll Up"
+            width={50}
+            height={50}
+          >
+          </Image>
+        </Link>
+
     </section>
   )
 }
