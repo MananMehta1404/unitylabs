@@ -30,6 +30,22 @@ export interface URLProps {
     value: string
 }
 
+export interface CommentProps {
+    author: string,
+    children: CommentProps[],
+    created_at: string,
+    created_at_i: number,
+    id: number,
+    options: [],
+    parent_id: number,
+    points: number,
+    story_id: number,
+    text: string,
+    title: string,
+    type: string,
+    url: string
+}
+
 export interface PostProps {
     _highlightResult: {
         author: AuthorProps,
@@ -38,7 +54,7 @@ export interface PostProps {
     }
     _tags: string[],
     author: string,
-    children: PostProps[],
+    children: CommentProps[],
     created_at: string,
     created_at_i: number,
     num_comments: number,

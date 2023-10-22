@@ -3,26 +3,26 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-import { PostCard, ShowMore } from '@/components';
+import { PostCard} from '@/components';
 import { fetchPosts } from '@/utils';
 import { PostProps } from '@/types';
 
 const Feed = () => {
   const [searchText, setSearchText] = useState('');
+  const [pageNo, setpageNo] = useState(0);
+  const [nPages, setNPages] = useState(0);
   const [allPosts, setAllPosts] = useState(Object);
   const [loading, setLoading] = useState(false);
 
-  // pagination states
-  const [limit, setLimit] = useState(10);
-
   const getPosts = async () => {
     setLoading(true);
-    console.log("Hello");
 
     try{
-      const result = await fetchPosts(searchText);
+      const result = await fetchPosts(searchText, pageNo);
 
       setAllPosts(result);
+      setpageNo(result.page);
+      setNPages(result.nbPages);
     } catch (error) {
       console.log(error);
     } finally {
@@ -36,7 +36,7 @@ const Feed = () => {
 
   useEffect(() => {
     getPosts();
-  }, [searchText]);
+  }, [searchText, pageNo]);
 
   return (
     <section className='feed'>
@@ -54,9 +54,9 @@ const Feed = () => {
 
       {allPosts.hits?.length > 0 ? (
           <section>
-            <div className='home__cars-wrapper'>
+            <div className='home__cars-wrapper mb-10'>
               {allPosts.hits?.map((post: PostProps) => (
-                <PostCard post={post} />
+                <PostCard post={post} key={post.objectID} />
               ))}
             </div>
 
@@ -71,20 +71,30 @@ const Feed = () => {
                 />
               </div>
             )}
-
-            <ShowMore 
-              pageNumber={limit / 10}
-              isNext={limit > allPosts.hits?.length}
-              setLimit={setLimit}
-            />
           </section>
         ) : (
           <div className='home__error-container'>
             <h2 className='text-black text-xl font-bold'>
-              Loading waiting for posts
+              {loading && (
+                <div className='mt-16 w-full flex-center'>
+                  <Image
+                    src='/loader.svg'
+                    alt='loader'
+                    width={50}
+                    height={50}
+                    className='object-contain'
+                  />
+                </div>
+              )}
             </h2>
           </div>
         )}
+
+      <div>
+        <button onClick={() => setpageNo(pageNo - 1)} className='m-4 py-1 px-4 rounded-md bg-red-200'>Prev</button>
+        {pageNo + 1} of {nPages}
+        <button onClick={() => setpageNo(pageNo + 1)} className='m-4 py-1 px-4 rounded-md bg-red-200'>Next</button>
+      </div>
     </section>
   )
 }
